@@ -47,7 +47,6 @@ def lista_menus(request):
     menus = Menu.objects.all()
     return render(request, 'gestion_pedidos/lista_menus.html', {'menus': menus})
 
-@login_required
 def catalogo(request):
     platos = Plato.objects.all()
     return render(request, 'gestion_pedidos/catalogo.html', {'platos': platos})
