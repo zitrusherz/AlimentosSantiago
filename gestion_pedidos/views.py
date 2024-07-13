@@ -1,18 +1,12 @@
 from django.shortcuts import render, redirect
-
-# Create your views here.
-from .models import Pedido, Plato, DetallePedido
-from .forms import PedidoForm, DetallePedidoForm
-from .models import Menu
-from .forms import MenuForm
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
-from .models import Cliente
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from .forms import PedidoForm, DetallePedidoForm, MenuForm, CustomUserCreationForm
+from .models import Pedido, Plato, DetallePedido, Menu, Cliente
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models import Sum
-from django.db.models import Q
-
+from django.db.models import Sum, Q
+from django.contrib.auth.forms import AuthenticationForm
 
 def buscar_pedidos(request):
     query = request.GET.get('q')
@@ -36,6 +30,8 @@ def reportes(request):
         'ventas_totales': ventas_totales,
         'pedidos_por_estado': pedidos_por_estado,
     })
+
+@login_required
 def crear_menu(request):
     if request.method == 'POST':
         menu_form = MenuForm(request.POST)
@@ -46,13 +42,17 @@ def crear_menu(request):
         menu_form = MenuForm()
     return render(request, 'gestion_pedidos/crear_menu.html', {'menu_form': menu_form})
 
+@login_required
 def lista_menus(request):
     menus = Menu.objects.all()
     return render(request, 'gestion_pedidos/lista_menus.html', {'menus': menus})
+
+@login_required
 def catalogo(request):
     platos = Plato.objects.all()
     return render(request, 'gestion_pedidos/catalogo.html', {'platos': platos})
 
+@login_required
 def crear_pedido(request):
     if request.method == 'POST':
         pedido_form = PedidoForm(request.POST)
@@ -63,6 +63,7 @@ def crear_pedido(request):
         pedido_form = PedidoForm()
     return render(request, 'gestion_pedidos/crear_pedido.html', {'pedido_form': pedido_form})
 
+@login_required
 def detalle_pedido(request, pedido_id):
     pedido = Pedido.objects.get(id=pedido_id)
     if request.method == 'POST':
@@ -80,21 +81,41 @@ def detalle_pedido(request, pedido_id):
         'detalle_form': detalle_form,
         'detalles': detalles,
     })
+
+@login_required
 def lista_pedidos(request):
     pedidos = Pedido.objects.all()
     return render(request, 'gestion_pedidos/lista_pedidos.html', {'pedidos': pedidos})
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
             login(request, user)
             return redirect('catalogo')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'gestion_pedidos/registration/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('catalogo')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'gestion_pedidos/registration/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('catalogo')
 
 def enviar_notificacion_pedido(cliente_email, asunto, mensaje):
     send_mail(
