@@ -1,0 +1,18 @@
+{% extends 'gestion_pedidos/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Lista de Menús</h2>
+    <ul class="list-group">
+        {% for menu in menus %}
+            <li class="list-group-item">
+                {{ menu.cliente.nombre }} - {{ menu.fecha }}
+                <ul>
+                    {% for plato in menu.platos.all %}
+                        <li>{{ plato.nombre }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

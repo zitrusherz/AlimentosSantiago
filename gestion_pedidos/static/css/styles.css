@@ -1,0 +1,83 @@
+/* Configuración de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Happy+Monkey&family=Sagona+Book&family=GulimChe&display=swap');
+
+/* Estilos de cuerpo */
+body {
+    background-color: #ffffff;
+    color: #7f2a2a;
+    font-family: 'GulimChe', sans-serif;
+}
+
+/* Barra de navegación */
+.navbar {
+    background-color: #7f2a2a !important;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.navbar-nav .nav-link {
+    color: #ff9e3f !important;
+    margin-left: 15px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #c82506 !important;
+}
+
+/* Botones */
+.btn-primary {
+    background-color: #ee7777 !important;
+    border-color: #ee7777 !important;
+}
+
+.btn-primary:hover {
+    background-color: #c82506 !important;
+    border-color: #c82506 !important;
+}
+
+/* Alertas */
+.alert {
+    background-color: #ef9d9a !important;
+    border-color: #ef9d9a !important;
+}
+
+/* Encabezados */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Happy Monkey', sans-serif;
+}
+
+/* Subencabezados */
+.subheading {
+    font-family: 'Sagona Book', sans-serif;
+}
+
+/* Pie de página */
+.footer {
+    background-color: #7f2a2a !important;
+}
+
+/* Tarjetas */
+.card {
+    border-color: #c82506 !important;
+}
+
+.card .card-title {
+    color: #c82506;
+}
+
+/* Tablas */
+.table th {
+    background-color: #ff9e3f;
+    color: #fff;
+}
+
+.table td {
+    background-color: #ffe6cc;
+}

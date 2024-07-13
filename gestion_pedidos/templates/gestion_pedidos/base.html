@@ -1,0 +1,123 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Empresa de Alimentación Santiago{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Happy+Monkey&family=Sagona+Book&family=GulimChe&display=swap" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">  <!-- Asegúrate de cargar después de Bootstrap -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <meta name="description" content="Empresa de Alimentación Santiago, ofreciendo servicios de comida rápida y casera a domicilio.">
+    <meta name="keywords" content="comida rápida, comida casera, comida a domicilio, El Comilón">
+    <meta name="author" content="Empresa de Alimentación Santiago">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'catalogo' %}">
+                <img src="{% static 'images/AlimentosSantiagoLogobyDesigner.png' %}" alt="Logo" height="40" class="d-inline-block align-top">
+                El Comilón
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item {% if request.resolver_match.url_name == 'catalogo' %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'catalogo' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'lista_pedidos' %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'lista_pedidos' %}">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contacto</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Registrarse</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-5">
+        <div class="py-5">
+            {% if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer bg-dark text-white py-3 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 Empresa de Alimentación Santiago - Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p>Diseñado por Empresa de Alimentación Santiago</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+            // Validación de formularios Bootstrap con jQuery
+            $("form.needs-validation").on("submit", function (event) {
+                var form = $(this);
+                if (form[0].checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.addClass("was-validated");
+            });
+
+            // Mensaje de confirmación antes de enviar un formulario
+            $("form.confirmation-required").on("submit", function (event) {
+                if (!confirm("¿Estás seguro de que deseas enviar este formulario?")) {
+                    event.preventDefault();
+                }
+            });
+
+            // Mostrar y ocultar elementos dinámicamente
+            $(".toggle-element").click(function () {
+                var target = $(this).data("target");
+                $(target).toggle();
+            });
+
+            // Deshabilitar el botón de envío después de enviar el formulario
+            $("form.disable-on-submit").on("submit", function () {
+                var button = $(this).find("button[type=submit]");
+                button.prop("disabled", true);
+            });
+        });
+    </script>
+</body>
+</html>
