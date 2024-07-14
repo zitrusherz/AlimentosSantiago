@@ -47,9 +47,10 @@ def lista_menus(request):
     menus = Menu.objects.all()
     return render(request, 'gestion_pedidos/lista_menus.html', {'menus': menus})
 
-def catalogo(request):
+def index(request):
     platos = Plato.objects.all()
-    return render(request, 'gestion_pedidos/catalogo.html', {'platos': platos})
+    numbers = range(1, 13)  # Agregar la lista de números para el contexto
+    return render(request, 'gestion_pedidos/index.html', {'platos': platos, 'numbers': numbers})
 
 @login_required
 def crear_pedido(request):
@@ -93,7 +94,7 @@ def register(request):
             user = form.save()
             Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
             login(request, user)
-            return redirect('catalogo')
+            return redirect('index')
     else:
         form = CustomUserCreationForm()
     return render(request, 'gestion_pedidos/registration/register.html', {'form': form})
@@ -107,14 +108,18 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('catalogo')
+                return redirect('index')
     else:
         form = AuthenticationForm()
     return render(request, 'gestion_pedidos/registration/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
-    return redirect('catalogo')
+    return redirect('index')
+
+def catalogo(request):
+    platos = Plato.objects.all()
+    return render(request, 'gestion_pedidos/catalogo.html', {'platos': platos})
 
 def enviar_notificacion_pedido(cliente_email, asunto, mensaje):
     send_mail(

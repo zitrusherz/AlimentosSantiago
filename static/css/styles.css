@@ -135,3 +135,39 @@ h1, h2, h3, h4, h5, h6 {
 .invalid-feedback {
     color: #c82506;
 }
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.card {
+    border: none;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
+
+.card-title {
+    font-family: 'Happy Monkey', sans-serif;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #666;
+}
+
+.btn-primary {
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+.btn-primary:hover {
+    background-color: #c9302c;
+    border-color: #c9302c;
+}
