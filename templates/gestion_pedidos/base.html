@@ -15,33 +15,11 @@
     <meta name="description" content="Empresa de Alimentación Santiago, ofreciendo servicios de comida rápida y casera a domicilio.">
     <meta name="keywords" content="comida rápida, comida casera, comida a domicilio, El Comilón">
     <meta name="author" content="Empresa de Alimentación Santiago">
-    <style>
-        .btn-login {
-            background-color: #343a40;
-            color: #fff;
-            border-color: #343a40;
-        }
-        .btn-login:hover {
-            background-color: #23272b;
-            color: #fff;
-            border-color: #23272b;
-        }
-        .btn-register {
-            background-color: #6c757d;
-            color: #fff;
-            border-color: #6c757d;
-        }
-        .btn-register:hover {
-            background-color: #5a6268;
-            color: #fff;
-            border-color: #5a6268;
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'catalogo' %}">
+            <a class="navbar-brand" href="{% url 'index' %}">
                 <img src="{% static 'images/AlimentosSantiagoLogobyDesigner.png' %}" alt="Logo" height="40" class="d-inline-block align-top">
                 El Comilón
             </a>
@@ -50,8 +28,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item {% if request.resolver_match.url_name == 'catalogo' %}active{% endif %}">
-                        <a class="nav-link" href="{% url 'catalogo' %}">Inicio</a>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'index' %}">Inicio</a>
                     </li>
                     <li class="nav-item {% if request.resolver_match.url_name == 'lista_pedidos' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'lista_pedidos' %}">Pedidos</a>
@@ -65,10 +43,10 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link btn btn-login text-white" href="{% url 'login' %}">Iniciar sesión</a>
+                            <a class="nav-link btn btn-login" href="{% url 'login' %}">Iniciar sesión</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-register text-white" href="{% url 'register' %}">Registrarse</a>
+                            <a class="nav-link btn btn-register" href="{% url 'register' %}">Registrarse</a>
                         </li>
                     {% endif %}
                 </ul>
