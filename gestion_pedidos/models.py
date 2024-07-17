@@ -1,11 +1,22 @@
 from django.db import models
 from django.utils import timezone
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class Proveedor(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
     nombre = models.CharField(max_length=200)
     contacto = models.CharField(max_length=200)
     telefono = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nombre
+
+class Cliente(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
+    nombre = models.CharField(max_length=200)
+    email = models.EmailField(unique=True)
+    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.nombre
@@ -21,13 +32,15 @@ class Plato(models.Model):
     def __str__(self):
         return self.nombre
 
-class Cliente(models.Model):
-    nombre = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
-    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, validators=[MinValueValidator(0)])
+class Descuento(models.Model):
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='descuentos')
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='descuentos')
+    porcentaje_descuento = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
 
     def __str__(self):
-        return self.nombre
+        return f"{self.porcentaje_descuento}% off {self.plato.nombre} for {self.cliente.nombre}"
 
 class Repartidor(models.Model):
     nombre = models.CharField(max_length=200)
@@ -54,10 +67,17 @@ class Pedido(models.Model):
     repartidor = models.ForeignKey(Repartidor, on_delete=models.SET_NULL, null=True, blank=True)
 
     def calcular_total(self):
-        return sum(detalle.subtotal for detalle in self.detalles.all())
+        total = 0
+        for detalle in self.detalles.all():
+            descuento = detalle.plato.descuentos.filter(cliente=self.cliente, fecha_inicio__lte=timezone.now(), fecha_fin__gte=timezone.now()).first()
+            if descuento:
+                total += detalle.subtotal * (1 - (descuento.porcentaje_descuento / 100))
+            else:
+                total += detalle.subtotal
+        return total
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.cliente.nombre}"
+        return f"Pedido {self.id} - {self.cliente}"
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')

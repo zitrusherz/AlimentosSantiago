@@ -89,10 +89,15 @@ def register(request):
     form = CustomUserCreationForm(request.POST or None)
     if form.is_valid():
         user = form.save()
-        Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
+        role = form.cleaned_data.get('role')
+        if role == 'cliente':
+            Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
+        elif role == 'proveedor':
+            Proveedor.objects.create(usuario=user, nombre=user.username, contacto=user.username, telefono='')  # Ajusta los campos según tus necesidades
         login(request, user)
         return redirect('index')
     return render(request, 'gestion_pedidos/registration/register.html', {'form': form})
+
 
 # Autenticación de usuario
 def login_view(request):

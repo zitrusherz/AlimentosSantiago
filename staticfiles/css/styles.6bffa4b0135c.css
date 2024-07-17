@@ -31,42 +31,38 @@ body {
     color: #c82506 !important;
 }
 
-/* Botones del navbar */
-.navbar-nav .nav-item .nav-link.btn-login {
-    background-color: #a0a0a0 !important; /* Gris oscuro */
-    border-color: #a0a0a0 !important;
-    color: #ff9e3f !important; /* Texto amarillo */
-}
-
-.navbar-nav .nav-item .nav-link.btn-login:hover {
-    background-color: #707070 !important; /* Gris más oscuro */
-    border-color: #707070 !important;
-    color: #ffffff !important; /* Texto blanco */
-}
-
-.navbar-nav .nav-item .nav-link.btn-register {
-    background-color: #c0c0c0 !important; /* Gris claro */
-    border-color: #c0c0c0 !important;
-    color: #ff9e3f !important; /* Texto amarillo */
-}
-
-.navbar-nav .nav-item .nav-link.btn-register:hover {
-    background-color: #909090 !important; /* Gris más oscuro */
-    border-color: #909090 !important;
-    color: #ffffff !important; /* Texto blanco */
-}
-
-/* Botones para formularios */
-.btn-form {
-    background-color: #ee7777 !important; /* Rojo */
+/* Botones */
+.btn-primary {
+    background-color: #ee7777 !important;
     border-color: #ee7777 !important;
-    color: #000000 !important; /* Texto negro */
 }
 
-.btn-form:hover {
-    background-color: #c82506 !important; /* Rojo más oscuro */
+.btn-primary:hover {
+    background-color: #c82506 !important;
     border-color: #c82506 !important;
-    color: #ffffff !important; /* Texto blanco */
+}
+
+/* Botones para el formulario */
+.btn-register {
+    background-color: #6c757d !important; /* Color gris */
+    border-color: #6c757d !important;     /* Color gris */
+    color: white !important;
+}
+
+.btn-register:hover {
+    background-color: #5a6268 !important; /* Gris más oscuro para el hover */
+    border-color: #5a6268 !important;     /* Gris más oscuro para el hover */
+}
+
+.btn-login {
+    background-color: #6c757d !important; /* Color gris */
+    border-color: #6c757d !important;     /* Color gris */
+    color: white !important;
+}
+
+.btn-login:hover {
+    background-color: #5a6268 !important; /* Gris más oscuro para el hover */
+    border-color: #5a6268 !important;     /* Gris más oscuro para el hover */
 }
 
 /* Alertas */
