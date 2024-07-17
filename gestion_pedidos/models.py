@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
-
+from django.core.validators import MinValueValidator
 
 class Proveedor(models.Model):
     nombre = models.CharField(max_length=200)
@@ -12,17 +11,20 @@ class Proveedor(models.Model):
         return self.nombre
 
 class Plato(models.Model):
-    nombre = models.CharField(max_length=200)
-    precio = models.DecimalField(max_digits=6, decimal_places=2)
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(default='Descripción no disponible')
+    precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='platos')
+    featured = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='platos/', default='images/default.png')
 
     def __str__(self):
-        return f"{self.nombre} - {self.precio}€"
+        return self.nombre
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
-    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.nombre
@@ -44,9 +46,9 @@ class Pedido(models.Model):
         ('cancelado', 'Cancelado'),
     ]
 
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos')
     platos = models.ManyToManyField(Plato, through='DetallePedido')
-    fecha_hora_pedido = models.DateTimeField(default=timezone.now)  # Aquí se define el valor predeterminado
+    fecha_hora_pedido = models.DateTimeField(default=timezone.now)
     fecha_hora_entrega = models.DateTimeField()
     estado = models.CharField(max_length=100, choices=ESTADO_PEDIDO, default='pendiente')
     repartidor = models.ForeignKey(Repartidor, on_delete=models.SET_NULL, null=True, blank=True)
@@ -55,12 +57,12 @@ class Pedido(models.Model):
         return sum(detalle.subtotal for detalle in self.detallepedido_set.all())
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.cliente.nombre}"
+        return f"Pedido {self.id} - {self.cliente}"
 
 class DetallePedido(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default=1)
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='detalles_pedido')
+    cantidad = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     @property
     def subtotal(self):
@@ -68,8 +70,9 @@ class DetallePedido(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} x {self.plato.nombre}"
+
 class Menu(models.Model):
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='menus')
     fecha = models.DateField()
     platos = models.ManyToManyField(Plato)
 

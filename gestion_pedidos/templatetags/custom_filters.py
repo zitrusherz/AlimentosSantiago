@@ -3,5 +3,6 @@ from django import template
 register = template.Library()
 
 @register.filter
-def concat(val1, val2):
-    return f"{val1}{val2}"
+def to(value, arg):
+    """Creates a range of numbers from value to arg (inclusive)."""
+    return range(int(value), int(arg) + 1)
