@@ -1,0 +1,83 @@
+{% extends 'gestion_pedidos/../base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Bienvenido a El Comilón</h1>
+
+    <!-- Carrusel -->
+    <div id="carouselHero" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselHero" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselHero" data-bs-slide="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselHero" data-bs-slide="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'images/neco_arc1.png' %}" class="d-block w-100 carousel-img" alt="Neco Arc 1">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Neco Arc 1</h5>
+                    <p>Descripción del plato Neco Arc 1.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'images/neco_arc2.png' %}" class="d-block w-100 carousel-img" alt="Neco Arc 2">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Neco Arc 2</h5>
+                    <p>Descripción del plato Neco Arc 2.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'images/neco_arc3.png' %}" class="d-block w-100 carousel-img" alt="Neco Arc 3">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Neco Arc 3</h5>
+                    <p>Descripción del plato Neco Arc 3.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselHero" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselHero" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Platos Destacados -->
+    <div class="row mt-5">
+        <h2 class="text-center subheading">Platos Destacados</h2>
+        {% for plato in featured_platos %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card">
+                <img src="{{ plato.image.url }}" class="card-img-top img-fluid" alt="{{ plato.nombre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ plato.nombre }}</h5>
+                    <p class="card-text">{{ plato.descripcion }}</p>
+                    <a href="#" class="btn btn-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Platos -->
+    <div class="row mt-5">
+        <h2 class="text-center subheading">Platos</h2>
+        {% for i in 1|to:12 %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card">
+                <img src="{% static 'images/neco_arc' %}{{ i }}.png" class="card-img-top img-fluid" alt="Neco Arc {{ i }}">
+                <div class="card-body">
+                    <h5 class="card-title">Neco Arc {{ i }}</h5>
+                    <p class="card-text">Descripción del plato Neco Arc {{ i }}.</p>
+                    <a href="#" class="btn btn-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

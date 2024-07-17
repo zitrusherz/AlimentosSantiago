@@ -1,10 +1,11 @@
+# gestion_pedidos/models.py
+from django.conf import settings  # Importa el modelo de usuario configurado en settings.py
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import User
 
 class Proveedor(models.Model):
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200)
     contacto = models.CharField(max_length=200)
     telefono = models.CharField(max_length=50)
@@ -13,7 +14,7 @@ class Proveedor(models.Model):
         return self.nombre
 
 class Cliente(models.Model):
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, validators=[MinValueValidator(0)])

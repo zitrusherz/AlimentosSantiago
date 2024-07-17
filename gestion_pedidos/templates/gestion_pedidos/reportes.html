@@ -1,0 +1,13 @@
+{% extends 'gestion_pedidos/../base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Reportes</h2>
+    <p>Ventas Totales: {{ ventas_totales.total }}</p>
+    <h3>Pedidos por Estado</h3>
+    <ul>
+        {% for estado in pedidos_por_estado %}
+            <li>{{ estado.estado }}: {{ estado.total }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

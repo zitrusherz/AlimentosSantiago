@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Sum, Q
-from .forms import PedidoForm, DetallePedidoForm, MenuForm, CustomUserCreationForm
-from .models import Pedido, DetallePedido, Menu, Cliente, Plato
+from .forms import PedidoForm, DetallePedidoForm, MenuForm
+from .models import Pedido, DetallePedido, Menu, Plato
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -83,38 +81,6 @@ def detalle_pedido(request, pedido_id):
 def lista_pedidos(request):
     pedidos = Pedido.objects.all()
     return render(request, 'gestion_pedidos/lista_pedidos.html', {'pedidos': pedidos})
-
-# Registro de usuarios
-def register(request):
-    form = CustomUserCreationForm(request.POST or None)
-    if form.is_valid():
-        user = form.save()
-        role = form.cleaned_data.get('role')
-        if role == 'cliente':
-            Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
-        elif role == 'proveedor':
-            Proveedor.objects.create(usuario=user, nombre=user.username, contacto=user.username, telefono='')  # Ajusta los campos según tus necesidades
-        login(request, user)
-        return redirect('index')
-    return render(request, 'gestion_pedidos/registration/register.html', {'form': form})
-
-
-# Autenticación de usuario
-def login_view(request):
-    form = AuthenticationForm(request, data=request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect('index')
-    return render(request, 'gestion_pedidos/registration/login.html', {'form': form})
-
-# Cierre de sesión
-def logout_view(request):
-    logout(request)
-    return redirect('index')
 
 # Vista del catálogo de platos
 def catalogo(request):

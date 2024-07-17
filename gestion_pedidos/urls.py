@@ -1,16 +1,21 @@
 from django.urls import path
-from . import views
+from .views import (
+    index, buscar_pedidos, reportes, crear_menu, lista_menus,
+    crear_pedido, detalle_pedido, lista_pedidos, catalogo
+)
+from accounts.views import register, login_view, logout_view
 
 urlpatterns = [
-    path('', views.index, name='index'),  # Página principal
-    path('pedidos/', views.lista_pedidos, name='lista_pedidos'),
-    path('crear_pedido/', views.crear_pedido, name='crear_pedido'),
-    path('detalle_pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
-    path('menus/', views.lista_menus, name='lista_menus'),
-    path('crear_menu/', views.crear_menu, name='crear_menu'),
-    path('accounts/login/', views.login_view, name='login'),
-    path('accounts/logout/', views.logout_view, name='logout'),
-    path('register/', views.register, name='register'),
-    path('buscar_pedidos/', views.buscar_pedidos, name='buscar_pedidos'),
-    path('catalogo/', views.catalogo, name='catalogo'),
+    path('', index, name='index'),
+    path('buscar/', buscar_pedidos, name='buscar_pedidos'),
+    path('reportes/', reportes, name='reportes'),
+    path('menu/nuevo/', crear_menu, name='crear_menu'),
+    path('menus/', lista_menus, name='lista_menus'),
+    path('pedido/nuevo/', crear_pedido, name='crear_pedido'),
+    path('pedido/<int:pedido_id>/', detalle_pedido, name='detalle_pedido'),
+    path('pedidos/', lista_pedidos, name='lista_pedidos'),
+    path('catalogo/', catalogo, name='catalogo'),
+    path('register/', register, name='register'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
 ]

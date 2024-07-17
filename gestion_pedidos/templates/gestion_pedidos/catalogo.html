@@ -1,0 +1,20 @@
+{% extends 'gestion_pedidos/../base.html' %}
+{% block title %}Catálogo de Platos{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="my-4">Catálogo de Platos</h1>
+    <div class="row">
+        {% for plato in platos %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ plato.nombre }}</h4>
+                        <h5>{{ plato.precio }}€</h5>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'crear_pedido' %}" class="btn btn-primary">Crear Pedido</a>
+</div>
+{% endblock %}
