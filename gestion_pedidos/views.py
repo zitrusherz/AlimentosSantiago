@@ -43,10 +43,13 @@ def lista_menus(request):
 
 # Vista principal del sitio
 def index(request):
+    platos = Plato.objects.all()[:6]  # Mostrar solo los primeros 6 platos
     featured_platos = Plato.objects.filter(featured=True)
+    numbers = list(range(1, 13))  # Crear la lista de números del 1 al 12
     return render(request, 'gestion_pedidos/index.html', {
+        'platos': platos,
         'featured_platos': featured_platos,
-        'numbers': range(1, 13)  # Números para imágenes dinámicas
+        'numbers': numbers
     })
 
 # Crea un nuevo pedido
