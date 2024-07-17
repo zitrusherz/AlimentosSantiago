@@ -1,0 +1,161 @@
+/* Configuración de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Happy+Monkey&family=Sagona+Book&family=GulimChe&display=swap');
+
+/* Estilos de cuerpo */
+body {
+    background-color: #ffffff;
+    color: #7f2a2a;
+    font-family: 'GulimChe', sans-serif;
+}
+
+/* Barra de navegación */
+.navbar {
+    background-color: #7f2a2a !important;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.navbar-nav .nav-link {
+    color: #ff9e3f !important;
+    margin-left: 15px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #c82506 !important;
+}
+
+/* Botones del navbar */
+.navbar-nav .nav-item .nav-link.btn-login {
+    background-color: #d3d3d3 !important; /* Gris claro */
+    border-color: #d3d3d3 !important;
+    color: #ff9e3f !important; /* Texto amarillo */
+}
+
+.navbar-nav .nav-item .nav-link.btn-login:hover {
+    background-color: #a9a9a9 !important; /* Gris oscuro */
+    border-color: #a9a9a9 !important;
+    color: #c82506 !important; /* Texto rojo */
+}
+
+.navbar-nav .nav-item .nav-link.btn-register {
+    background-color: #d3d3d3 !important; /* Gris claro */
+    border-color: #d3d3d3 !important;
+    color: #ff9e3f !important; /* Texto amarillo */
+}
+
+.navbar-nav .nav-item .nav-link.btn-register:hover {
+    background-color: #a9a9a9 !important; /* Gris oscuro */
+    border-color: #a9a9a9 !important;
+    color: #c82506 !important; /* Texto rojo */
+}
+
+/* Alertas */
+.alert {
+    background-color: #ef9d9a !important;
+    border-color: #ef9d9a !important;
+}
+
+/* Encabezados */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Happy Monkey', sans-serif;
+    color: #7f2a2a;
+}
+
+/* Subencabezados */
+.subheading {
+    font-family: 'Sagona Book', sans-serif;
+    color: #c82506;
+}
+
+/* Pie de página */
+.footer {
+    background-color: #7f2a2a !important;
+}
+
+/* Tarjetas */
+.card {
+    border-color: #c82506 !important;
+}
+
+.card .card-title {
+    color: #c82506;
+}
+
+/* Tablas */
+.table th {
+    background-color: #ff9e3f;
+    color: #fff;
+}
+
+.table td {
+    background-color: #ffe6cc;
+}
+
+/* Formulario de registro */
+.form-register {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    border: 1px solid #ee7777;
+    border-radius: 5px;
+    background-color: #fff5f5;
+}
+
+.form-register .form-control {
+    border-radius: 20px;
+    padding: 10px 15px;
+    border: 1px solid #ff9e3f;
+}
+
+.form-register .form-control:focus {
+    border-color: #c82506;
+    box-shadow: 0 0 5px rgba(200, 37, 6, 0.5);
+}
+
+.form-register label {
+    font-weight: bold;
+    color: #7f2a2a;
+}
+
+.form-register .form-text {
+    color: #c82506;
+}
+
+.form-register .btn {
+    width: 100%;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.invalid-feedback {
+    color: #c82506;
+}
+
+/* Carrusel Hero */
+#carouselHero .carousel-item img {
+    object-fit: cover;
+    object-position: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+#carouselHero .carousel-item:before {
+    content: "";
+    background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.carousel-item {
+    transition: transform 0.6s ease-in-out, opacity 0.5s ease-out; /* Transición personalizada */
+}
