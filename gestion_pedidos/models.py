@@ -54,10 +54,10 @@ class Pedido(models.Model):
     repartidor = models.ForeignKey(Repartidor, on_delete=models.SET_NULL, null=True, blank=True)
 
     def calcular_total(self):
-        return sum(detalle.subtotal for detalle in self.detallepedido_set.all())
+        return sum(detalle.subtotal for detalle in self.detalles.all())
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.cliente}"
+        return f"Pedido {self.id} - {self.cliente.nombre}"
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
