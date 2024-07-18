@@ -47,6 +47,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ver_carro' %}">
+                                <img src="{% static 'images/cart_icon.png' %}" alt="Carrito" height="24">
+                            </a>
+                        </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link btn btn-primary text-white" href="{% url 'login' %}">Iniciar sesión</a>

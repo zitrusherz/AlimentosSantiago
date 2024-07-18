@@ -1,7 +1,10 @@
+# gestion_pedidos/urls.py
+
 from django.urls import path
 from .views import (
     index, buscar_pedidos, reportes, crear_menu, lista_menus,
-    crear_pedido, detalle_pedido, lista_pedidos, catalogo
+    crear_pedido, detalle_pedido, lista_pedidos, catalogo,
+    carro, agregar_al_carro, ver_carro, checkout
 )
 from accounts.views import register, login_view, logout_view
 
@@ -18,4 +21,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('carro/', carro, name='carro'),
+    path('agregar_al_carro/<int:plato_id>/', agregar_al_carro, name='agregar_al_carro'),
+    path('ver_carro/', ver_carro, name='ver_carro'),
+    path('checkout/', checkout, name='checkout'),
 ]

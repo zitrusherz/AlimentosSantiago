@@ -1,20 +1,29 @@
-{% extends 'gestion_pedidos/../base.html' %}
-{% block title %}Catálogo de Platos{% endblock %}
+{% extends 'base.html' %}
+
 {% block content %}
 <div class="container mt-5">
-    <h1 class="my-4">Catálogo de Platos</h1>
+    <h1>Catálogo de Platos</h1>
     <div class="row">
         {% for plato in platos %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ plato.nombre }}</h4>
-                        <h5>{{ plato.precio }}€</h5>
-                    </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ plato.image.url }}" class="card-img-top" alt="{{ plato.nombre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ plato.nombre }}</h5>
+                    <p class="card-text">{{ plato.descripcion }}</p>
+                    <p class="card-text">Precio: {{ plato.precio }}</p>
+                    <form action="{% url 'agregar_al_carro' plato.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="cantidad-{{ plato.id }}" class="form-label">Cantidad</label>
+                            <input type="number" id="cantidad-{{ plato.id }}" name="cantidad" min="1" value="1" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar al Carro</button>
+                    </form>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </div>
-    <a href="{% url 'crear_pedido' %}" class="btn btn-primary">Crear Pedido</a>
 </div>
 {% endblock %}

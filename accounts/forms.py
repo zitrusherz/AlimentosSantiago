@@ -1,7 +1,9 @@
+# accounts/forms.py
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from gestion_pedidos.models import Cliente, Proveedor
+from .models import CustomUser
+from gestion_pedidos.models import Cliente
 
 ROLE_CHOICES = [
     ('cliente', 'Cliente'),
@@ -13,7 +15,7 @@ class CustomUserCreationForm(UserCreationForm):
     role = forms.ChoiceField(choices=ROLE_CHOICES, required=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('username', 'email', 'password1', 'password2', 'role')
 
     def clean_email(self):
@@ -24,12 +26,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        email = self.cleaned_data['email']
-        role = self.cleaned_data['role']
-        if commit:
-            user.save()
-            if role == 'cliente':
-                Cliente.objects.create(usuario=user, nombre=user.username, email=email)
-            elif role == 'proveedor':
-                Proveedor.objects.create(usuario=user, nombre=user.username, contacto='', telefono='')
+        user.save()
+        if self.cleaned_data['role'] == 'cliente':
+            Cliente.objects.create(usuario=user, nombre=user.username, email=user.email)
         return user

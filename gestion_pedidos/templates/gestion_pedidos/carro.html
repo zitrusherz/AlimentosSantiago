@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Carro de Compras</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Plato</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.plato.nombre }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>${{ item.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Total: ${{ total }}</h3>
+    <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+</div>
+{% endblock %}

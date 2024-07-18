@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error en el Checkout</title>
+</head>
+<body>
+    <h1>Error en el Checkout</h1>
+    <p>Ocurrió un error mientras procesábamos tu pedido. Por favor, inténtalo de nuevo.</p>
+    <p>Error: {{ error }}</p>
+    <a href="{% url 'carro' %}">Volver al Carro de Compras</a>
+</body>
+</html>

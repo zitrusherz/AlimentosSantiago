@@ -1,8 +1,12 @@
-from django.shortcuts import render, redirect
+# gestion_pedidos/views.py
+
+from django.utils import timezone
+from django.db import transaction
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Q
 from .forms import PedidoForm, DetallePedidoForm, MenuForm
-from .models import Pedido, DetallePedido, Menu, Plato
+from .models import Pedido, DetallePedido, Menu, Plato, CarroItem
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -17,8 +21,8 @@ def buscar_pedidos(request):
 
 # Muestra reportes de ventas y pedidos
 def reportes(request):
-    ventas_totales = Pedido.objects.aggregate(total=Sum('total'))['total']
-    pedidos_por_estado = Pedido.objects.values('estado').annotate(total=Sum('total'))
+    ventas_totales = Pedido.objects.aggregate(total=Sum('calcular_total'))['total']
+    pedidos_por_estado = Pedido.objects.values('estado').annotate(total=Sum('calcular_total'))
     return render(request, 'gestion_pedidos/reportes.html', {
         'ventas_totales': ventas_totales,
         'pedidos_por_estado': pedidos_por_estado,
@@ -90,3 +94,78 @@ def catalogo(request):
 # Enviar notificaciones por correo
 def enviar_notificacion_pedido(cliente_email, asunto, mensaje):
     send_mail(asunto, mensaje, settings.EMAIL_HOST_USER, [cliente_email], fail_silently=False)
+
+@login_required
+def carro(request):
+    # Asegurar que cada usuario tenga un pedido activo
+    pedido, created = Pedido.objects.get_or_create(usuario=request.user, estado='pendiente')
+
+    if request.method == 'POST':
+        plato_id = request.POST.get('plato_id')
+        cantidad = int(request.POST.get('cantidad', 1))
+        plato = get_object_or_404(Plato, id=plato_id)
+        carro_item, created = CarroItem.objects.get_or_create(usuario=request.user, plato=plato)
+        carro_item.cantidad += cantidad
+        carro_item.save()
+        return redirect('carro')
+
+    items = CarroItem.objects.filter(usuario=request.user)
+    total = sum(item.subtotal for item in items)
+    return render(request, 'gestion_pedidos/carro.html', {'items': items, 'total': total})
+
+def agregar_al_carro(request, plato_id):
+    carro = request.session.get('carro', {})
+    cantidad = request.POST.get('cantidad', 1)
+
+    if plato_id in carro:
+        carro[plato_id] = carro.get(plato_id, 0) + int(cantidad)
+    else:
+        carro[plato_id] = int(cantidad)
+
+    request.session['carro'] = carro
+    return redirect('catalogo')
+
+def ver_carro(request):
+    carro = request.session.get('carro', {})
+    platos = Plato.objects.filter(id__in=carro.keys())
+    total = 0
+    items = []
+
+    for plato in platos:
+        subtotal = plato.precio * carro[str(plato.id)]
+        total += subtotal
+        items.append({
+            'plato': plato,
+            'cantidad': carro[str(plato.id)],
+            'subtotal': subtotal,
+        })
+
+    return render(request, 'gestion_pedidos/ver_carro.html', {'items': items, 'total': total})
+
+@login_required
+def checkout(request):
+    carro = request.session.get('carro', {})
+    if not carro:
+        return redirect('carro')  # Redirigir al carro si está vacío
+
+    try:
+        with transaction.atomic():
+            # Crear el pedido
+            pedido = Pedido.objects.create(
+                usuario=request.user,
+                fecha_hora_entrega=timezone.now(),
+                estado='pendiente'
+            )
+
+            # Crear los detalles del pedido
+            for plato_id, cantidad in carro.items():
+                plato = Plato.objects.get(id=plato_id)
+                DetallePedido.objects.create(pedido=pedido, plato=plato, cantidad=cantidad)
+
+            # Limpiar el carro de la sesión después de un checkout exitoso
+            del request.session['carro']
+            return redirect('orden_completada')
+
+    except Exception as e:
+        # Si ocurre un error, el pedido no se procesa y el carro de compras se mantiene igual
+        return render(request, 'gestion_pedidos/checkout_error.html', {'error': str(e)})
