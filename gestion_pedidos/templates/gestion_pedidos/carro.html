@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>Carro de Compras</h1>
-    <table class="table table-bordered">
+<h1>Carro de Compras</h1>
+
+{% if items %}
+    <table>
         <thead>
             <tr>
                 <th>Plato</th>
@@ -14,14 +16,31 @@
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{ item.plato.nombre }}</td>
+                <td>
+                    <img src="{% static item.plato.image %}" alt="{{ item.plato.nombre }}" width="50">
+                    {{ item.plato.nombre }}
+                </td>
                 <td>{{ item.cantidad }}</td>
-                <td>${{ item.subtotal }}</td>
+                <td>{{ item.subtotal|floatformat:0 }} CLP</td>
+                <td>
+                    <form action="{% url 'eliminar_unidad_del_carro' item.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">-</button>
+                    </form>
+                    <form action="{% url 'eliminar_del_carro' item.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h3>Total: ${{ total }}</h3>
-    <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
-</div>
+    <h3>Total: {{ total|floatformat:0 }} CLP</h3>
+    <a href="{% url 'checkout' %}" class="btn btn-success">Ir a Checkout</a>
+{% else %}
+    <p>Tu carro de compras está vacío.</p>
+{% endif %}
+
+<a href="{% url 'catalogo' %}" class="btn btn-primary">Seguir Comprando</a>
 {% endblock %}

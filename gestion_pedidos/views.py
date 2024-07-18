@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 from django.utils import timezone
 from django.db import transaction
@@ -53,6 +52,7 @@ def index(request):
         'featured_platos': featured_platos,
         'numbers': numbers
     })
+
 # Crea un nuevo pedido
 @login_required
 def crear_pedido(request):
@@ -94,31 +94,12 @@ def catalogo(request):
 def enviar_notificacion_pedido(cliente_email, asunto, mensaje):
     send_mail(asunto, mensaje, settings.EMAIL_HOST_USER, [cliente_email], fail_silently=False)
 
+# Agregar un plato al carrito
 @login_required
-def carro(request):
-    # Asegurar que cada usuario tenga un pedido activo
-    fecha_hora_entrega = timezone.now() + timedelta(minutes=30)
-    pedido, created = Pedido.objects.get_or_create(
-        usuario=request.user,
-        estado='pendiente',
-        defaults={'fecha_hora_entrega': fecha_hora_entrega}
-    )
-
-    if request.method == 'POST':
-        plato_id = request.POST.get('plato_id')
-        cantidad = int(request.POST.get('cantidad', 1))
-        plato = get_object_or_404(Plato, id=plato_id)
-        carro_item, created = CarroItem.objects.get_or_create(pedido=pedido, plato=plato)
-        carro_item.cantidad += cantidad
-        carro_item.save()
-        return redirect('carro')
-
-    items = pedido.carro_items.all()
-    total = sum(item.subtotal for item in items)
-    return render(request, 'gestion_pedidos/carro.html', {'items': items, 'total': total})
 def agregar_al_carro(request, plato_id):
     carro = request.session.get('carro', {})
     cantidad = request.POST.get('cantidad', 1)
+    plato_id = str(plato_id)
 
     if plato_id in carro:
         carro[plato_id] = carro.get(plato_id, 0) + int(cantidad)
@@ -128,6 +109,8 @@ def agregar_al_carro(request, plato_id):
     request.session['carro'] = carro
     return redirect('catalogo')
 
+# Ver el carrito
+@login_required
 def ver_carro(request):
     carro = request.session.get('carro', {})
     platos = Plato.objects.filter(id__in=carro.keys())
@@ -135,21 +118,48 @@ def ver_carro(request):
     items = []
 
     for plato in platos:
-        subtotal = plato.precio * carro[str(plato.id)]
+        item_id = plato.id
+        cantidad = carro[str(item_id)]
+        subtotal = plato.precio * cantidad
         total += subtotal
         items.append({
+            'id': item_id,
             'plato': plato,
-            'cantidad': carro[str(plato.id)],
+            'cantidad': cantidad,
             'subtotal': subtotal,
         })
 
     return render(request, 'gestion_pedidos/ver_carro.html', {'items': items, 'total': total})
 
+# Eliminar un plato del carrito
+@login_required
+def eliminar_del_carro(request, plato_id):
+    carro = request.session.get('carro', {})
+    plato_id = str(plato_id)
+    if plato_id in carro:
+        del carro[plato_id]
+    request.session['carro'] = carro
+    return redirect('ver_carro')
+
+# Eliminar una unidad de un plato del carrito
+@login_required
+def eliminar_unidad_del_carro(request, plato_id):
+    carro = request.session.get('carro', {})
+    plato_id = str(plato_id)
+    if plato_id in carro:
+        if carro[plato_id] > 1:
+            carro[plato_id] -= 1
+        else:
+            del carro[plato_id]
+    request.session['carro'] = carro
+    return redirect('ver_carro')
+
+# Realizar el checkout
 @login_required
 def checkout(request):
     try:
-        carro_items = CarroItem.objects.filter(usuario=request.user)
-        if not carro_items.exists():
+        carro = request.session.get('carro', {})
+        if not carro:
             return redirect('ver_carro')  # Redirige al carro si está vacío
 
         fecha_hora_entrega = timezone.now() + timedelta(minutes=30)
@@ -160,17 +170,12 @@ def checkout(request):
                 fecha_hora_entrega=fecha_hora_entrega,
                 estado='pendiente'
             )
-            for item in carro_items:
-                DetallePedido.objects.create(pedido=pedido, plato=item.plato, cantidad=item.cantidad)
+            for plato_id, cantidad in carro.items():
+                plato = get_object_or_404(Plato, id=plato_id)
+                DetallePedido.objects.create(pedido=pedido, plato=plato, cantidad=cantidad)
 
-        CarroItem.objects.filter(usuario=request.user).delete()  # Limpiar el carro de la sesión
+        request.session['carro'] = {}  # Limpiar el carro de la sesión
         return redirect('orden_completada')
     except Exception as e:
         # En caso de cualquier error, redirige a la página de error
         return render(request, 'gestion_pedidos/checkout_error.html', {'error': str(e)})
-
-
-
-
-
-
