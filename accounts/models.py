@@ -1,4 +1,8 @@
+# accounts/models.py
+
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from gestion_pedidos.models import Cliente
 
 class CustomUser(AbstractUser):
     @property
@@ -7,4 +11,5 @@ class CustomUser(AbstractUser):
 
     @property
     def cliente_profile(self):
-        return self.cliente if hasattr(self, 'cliente') else None
+        # Esto retorna el objeto Cliente asociado al usuario, si existe
+        return Cliente.objects.filter(usuario=self).first()

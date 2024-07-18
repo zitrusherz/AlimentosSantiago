@@ -6,7 +6,6 @@ from .views import (
     crear_pedido, detalle_pedido, lista_pedidos, catalogo,
     carro, agregar_al_carro, ver_carro, checkout
 )
-from accounts.views import register, login_view, logout_view
 
 urlpatterns = [
     path('', index, name='index'),
@@ -18,9 +17,6 @@ urlpatterns = [
     path('pedido/<int:pedido_id>/', detalle_pedido, name='detalle_pedido'),
     path('pedidos/', lista_pedidos, name='lista_pedidos'),
     path('catalogo/', catalogo, name='catalogo'),
-    path('register/', register, name='register'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
     path('carro/', carro, name='carro'),
     path('agregar_al_carro/<int:plato_id>/', agregar_al_carro, name='agregar_al_carro'),
     path('ver_carro/', ver_carro, name='ver_carro'),

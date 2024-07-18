@@ -1,4 +1,6 @@
+# gestion_pedidos/models.py
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -13,7 +15,7 @@ class Proveedor(models.Model):
         return self.nombre
 
 class Cliente(models.Model):
-    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cliente_profile')
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.0, validators=[MinValueValidator(0)])
@@ -52,7 +54,6 @@ class Repartidor(models.Model):
 
 class Pedido(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pedidos')
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos')  # Agregar campo cliente
     ESTADO_PEDIDO = [
         ('pendiente', 'Pendiente'),
         ('en_proceso', 'En Proceso'),
@@ -61,6 +62,7 @@ class Pedido(models.Model):
         ('cancelado', 'Cancelado'),
     ]
 
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pedidos', null=True, blank=True)
     platos = models.ManyToManyField(Plato, through='DetallePedido')
     fecha_hora_pedido = models.DateTimeField(default=timezone.now)
     fecha_hora_entrega = models.DateTimeField()
@@ -70,7 +72,7 @@ class Pedido(models.Model):
     def calcular_total(self):
         total = 0
         for detalle in self.detalles.all():
-            descuento = detalle.plato.descuentos.filter(cliente=self.usuario.cliente_profile, fecha_inicio__lte=timezone.now(), fecha_fin__gte=timezone.now()).first()
+            descuento = detalle.plato.descuentos.filter(cliente=self.cliente, fecha_inicio__lte=timezone.now(), fecha_fin__gte=timezone.now()).first()
             if descuento:
                 total += detalle.subtotal * (1 - (descuento.porcentaje_descuento / 100))
             else:
@@ -78,7 +80,7 @@ class Pedido(models.Model):
         return total
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.usuario}"
+        return f"Pedido {self.id} - {self.cliente}"
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
@@ -101,7 +103,7 @@ class Menu(models.Model):
         return f"Menu {self.fecha} - {self.cliente.nombre}"
 
 class CarroItem(models.Model):
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='carro_items')
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='carro_items')
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
 
@@ -111,3 +113,5 @@ class CarroItem(models.Model):
 
     def __str__(self):
         return f"{self.cantidad} de {self.plato.nombre}"
+
+
