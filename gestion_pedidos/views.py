@@ -147,23 +147,27 @@ def ver_carro(request):
 
 @login_required
 def checkout(request):
-    carro_items = CarroItem.objects.filter(usuario=request.user)
-    if not carro_items.exists():
-        return redirect('ver_carro')  # Redirige al carro si está vacío
+    try:
+        carro_items = CarroItem.objects.filter(usuario=request.user)
+        if not carro_items.exists():
+            return redirect('ver_carro')  # Redirige al carro si está vacío
 
-    fecha_hora_entrega = timezone.now() + timedelta(minutes=30)
-    with transaction.atomic():
-        pedido = Pedido.objects.create(
-            usuario=request.user,
-            cliente=request.user.cliente_profile,
-            fecha_hora_entrega=fecha_hora_entrega,
-            estado='pendiente'
-        )
-        for item in carro_items:
-            DetallePedido.objects.create(pedido=pedido, plato=item.plato, cantidad=item.cantidad)
+        fecha_hora_entrega = timezone.now() + timedelta(minutes=30)
+        with transaction.atomic():
+            pedido = Pedido.objects.create(
+                usuario=request.user,
+                cliente=request.user.cliente_profile,
+                fecha_hora_entrega=fecha_hora_entrega,
+                estado='pendiente'
+            )
+            for item in carro_items:
+                DetallePedido.objects.create(pedido=pedido, plato=item.plato, cantidad=item.cantidad)
 
-    CarroItem.objects.filter(usuario=request.user).delete()  # Limpiar el carro de la sesión
-    return redirect('orden_completada')
+        CarroItem.objects.filter(usuario=request.user).delete()  # Limpiar el carro de la sesión
+        return redirect('orden_completada')
+    except Exception as e:
+        # En caso de cualquier error, redirige a la página de error
+        return render(request, 'gestion_pedidos/checkout_error.html', {'error': str(e)})
 
 
 

@@ -29,11 +29,10 @@ class Plato(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='platos')
     featured = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='platos/', default='images/default.png')
+    imagen = models.CharField(max_length=255, default='images/platos/default.png')  # Nueva línea
 
     def __str__(self):
         return self.nombre
-
 class Descuento(models.Model):
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='descuentos')
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='descuentos')

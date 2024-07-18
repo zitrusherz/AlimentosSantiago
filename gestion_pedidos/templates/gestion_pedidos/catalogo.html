@@ -1,28 +1,24 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Catálogo de Platos{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h1>Catálogo de Platos</h1>
     <div class="row">
         {% for plato in platos %}
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <img src="{{ plato.image.url }}" class="card-img-top" alt="{{ plato.nombre }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ plato.nombre }}</h5>
-                    <p class="card-text">{{ plato.descripcion }}</p>
-                    <p class="card-text">Precio: {{ plato.precio }}</p>
-                    <form action="{% url 'agregar_al_carro' plato.id %}" method="post">
-                        {% csrf_token %}
-                        <div class="mb-2">
-                            <label for="cantidad-{{ plato.id }}" class="form-label">Cantidad</label>
-                            <input type="number" id="cantidad-{{ plato.id }}" name="cantidad" min="1" value="1" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Agregar al Carro</button>
-                    </form>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{% static plato.imagen %}" class="card-img-top" alt="{{ plato.nombre }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ plato.nombre }}</h5>
+                        <p class="card-text">{{ plato.descripcion }}</p>
+                        <p class="card-text">{{ plato.precio|floatformat:0 }} CLP</p>
+                        <a href="{% url 'agregar_al_carro' plato.id %}" class="btn btn-primary">Agregar al Carro</a>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 </div>
