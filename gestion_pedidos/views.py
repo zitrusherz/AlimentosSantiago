@@ -44,15 +44,12 @@ def lista_menus(request):
 
 # Vista principal del sitio
 def index(request):
-    platos = Plato.objects.all()[:6]  # Mostrar solo los primeros 6 platos
-    featured_platos = Plato.objects.filter(featured=True)
-    numbers = list(range(1, 13))  # Crear la lista de números del 1 al 12
+    platos = Plato.objects.all()  # Obtener todos los platos
+    featured_platos = Plato.objects.filter(featured=True)[:3]  # Obtener los primeros 3 platos destacados
     return render(request, 'gestion_pedidos/index.html', {
         'platos': platos,
         'featured_platos': featured_platos,
-        'numbers': numbers
     })
-
 # Crea un nuevo pedido
 @login_required
 def crear_pedido(request):
